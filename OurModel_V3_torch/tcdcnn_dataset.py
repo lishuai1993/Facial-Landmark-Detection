@@ -35,6 +35,7 @@ class FaceLandmarksDataset(Dataset):
         i= np.genfromtxt(join(mypath, train), delimiter=" ",usecols=0, dtype=str, unpack=True)
         bb1,bb2,bb3,bb4, bProb = np.genfromtxt(join(mypath,annotation), delimiter=" ", unpack=True)
         i = [k.replace('\\','/') for k in i]
+        print("i is:\t", len(i))
 
         #Converting Annotation according to resized images
         ratio_x=40/(bb3-bb1)
@@ -43,10 +44,12 @@ class FaceLandmarksDataset(Dataset):
         
         onlyfiles = [ f for f in i if isfile(join(mypath,f))]
         File_length=len(onlyfiles)
+        print("File_length", File_length)
         images = list()
         indexes = list()
         for n in range(0, File_length):
             try:
+                # print("ok")
                 #temp = cv2.resize(cv2.imread( join(mypath, onlyfiles[n]),0),(40,40))
                 temp = cv2.imread( join(mypath, onlyfiles[n]))
                 temp.astype(np.uint8)
@@ -56,13 +59,14 @@ class FaceLandmarksDataset(Dataset):
                     indexes.append(n)
                     continue
                 resized = cv2.resize(crop_img,(40,40),interpolation=cv2.INTER_AREA)
-                resized = resized.reshape(-1,40,40);
+                resized = resized.reshape(-1,40,40)
                 #resized = np.expand_dims(resized,axis=2)
                 images.append(resized)
             except:
                 indexes.append(n)
-        
+
         images = np.array(images)
+        print("nihao\t", images.size)
         for index in reversed(indexes):
             #print (index)
             i = np.delete(i,index)
@@ -83,6 +87,7 @@ class FaceLandmarksDataset(Dataset):
         #images = images.reshape(10000,-1,40,40)
         print(len(l1))
         File_length=len(images)
+        print(File_length)
 
         l1=np.transpose(np.reshape(l1,(-1,File_length)))
         l2=np.transpose(np.reshape(l2,(-1,File_length)))
@@ -106,7 +111,7 @@ class FaceLandmarksDataset(Dataset):
         glass = list()
         gender = list()
         pose = list()
-        gender= list();
+        gender= list()  
         for n in range(0,File_length):
             if g[n]==1:
                 gender.append(1)

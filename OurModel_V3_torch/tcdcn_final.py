@@ -11,6 +11,7 @@ import logging
 import matplotlib.pyplot as plt
 import sys
 import cv2
+from tqdm import tqdm
 logging.basicConfig(filename='example.log',level=logging.DEBUG)
 
 
@@ -110,7 +111,7 @@ class TCDCNN(nn.Module):
 #        print("base: ", loss_base)
 #        logging.info("base")
 #        logging.info(float(loss_base.data.numpy()))
-        return accuracy[0]
+        return accuracy.item()
 
 def test_model(model,dataloader_test):
 	for i,data in  enumerate(dataloader_test,1):  
@@ -144,7 +145,7 @@ if __name__ == "__main__":
     count = 0 
     accuracy = 0 
     loss = 0 
-    mypath = "/home/vyom/ADA_Project/MTFL"
+    mypath = "/home/shuai.li/code/fkp/Facial-Landmark-Detection/MTFL"
     train= "training.txt"
     annotation = "annotation.txt"
     test = "testing1.txt"
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     final_accuracy=0
     final_loss=0
     final_training_accuracy=0
-    for e in range(0,epochs):
+    for e in tqdm(range(0,epochs)):
         total_accuracy = 0
         loss_total=0
         count=0
@@ -186,8 +187,9 @@ if __name__ == "__main__":
             loss.backward() 
             optim.step()
     		#loss for training
-            loss_total = loss_total +  loss[0].data.numpy()[0]
-            accuracy_training = net.accuracy(x_one,landmark.float()) 
+            # loss_total = loss_total +  loss[0].data.numpy()[0]
+            loss_total = loss_total +  loss.item()
+            accuracy_training = net.accuracy(x_one,landmark.float())
             count = count + 1
             loss_text = "Loss:{}".format(float(loss_total/count))
             logging.info(loss_text)
