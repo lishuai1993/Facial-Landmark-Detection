@@ -41,11 +41,11 @@ class TCDCNN(nn.Module):
          self.linear_3 = nn.Linear(256,2)
          self.linear_4 = nn.Linear(256,2)  
          self.linear_5 = nn.Linear(256,5)
-         self.dropout = nn.Dropout();
+         self.dropout = nn.Dropout()
     
     def loss(self,pred,y):
         criterion = nn.CrossEntropyLoss()
-        mse_criterion  = nn.MSELoss();
+        mse_criterion  = nn.MSELoss()
 
         #landmark = y[:,0:10].float()
   
@@ -80,7 +80,7 @@ class TCDCNN(nn.Module):
       
         x = x.view( -1,256)
         x =  self.dropout(x)
-        return x;
+        return x 
        
     def forward(self,x):
         x  = self.features(x)
@@ -97,7 +97,7 @@ class TCDCNN(nn.Module):
         landmarkeyey= y[:,[1,6]].float()
         landmark = y[:,0:10].float()
 
-        mse_criterion  = nn.MSELoss();
+        mse_criterion  = nn.MSELoss() 
         loss_mse = mse_criterion(x,landmark)
         loss_base= mse_criterion(landmarkeye,landmarkeyey)
         accuracytemp= torch.div(loss_mse.data,loss_base.data)
@@ -129,7 +129,7 @@ def test_model(model,dataloader_test):
 		logging.info("Testing commencing for prediction")
 		logging.info(x_one)
 		logging.info("Testing commencing for actual")
-		logging.info(landmark.float());
+		logging.info(landmark.float()) 
 		logging.info("end-------------------------->")
 		#loss = net.loss([x_one,x_two,x_three,x_four,x_five],[landmark.float(),gender.long(),smile.long(),glass.long(),pose.long()])
 		accuracy = net.accuracy(x_one,landmark.float())
@@ -137,13 +137,13 @@ def test_model(model,dataloader_test):
     
 if __name__ == "__main__":
 
-    net = TCDCNN();
+    net = TCDCNN() 
     optim = optim.SGD(net.parameters(),0.003)
     #input = Variable(torch.randn(1, 1, 32, 32))
     
-    count = 0;
-    accuracy = 0;
-    loss = 0;
+    count = 0 
+    accuracy = 0 
+    loss = 0 
     mypath = "/home/vyom/ADA_Project/MTFL"
     train= "training.txt"
     annotation = "annotation.txt"
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     batch_size=64
     
     print("Starting training")
-    loss_total = 0;
+    loss_total = 0 
     
     epochs=100
     
@@ -183,17 +183,17 @@ if __name__ == "__main__":
             optim.zero_grad()
             x_one,x_two,x_three,x_four,x_five = net(images.float())		
             loss = net.loss([x_one,x_two,x_three,x_four,x_five],[landmark.float(),gender.long(),smile.long(),glass.long(),pose.long()])
-            loss.backward();
+            loss.backward() 
             optim.step()
     		#loss for training
             loss_total = loss_total +  loss[0].data.numpy()[0]
-            accuracy_training = net.accuracy(x_one,landmark.float());
+            accuracy_training = net.accuracy(x_one,landmark.float()) 
             count = count + 1
             loss_text = "Loss:{}".format(float(loss_total/count))
             logging.info(loss_text)
     		#Accuracy for testing
             net.eval()
-            accuracy = test_model(net,dataloader_test);
+            accuracy = test_model(net,dataloader_test) 
             total_accuracy = total_accuracy+accuracy
             #Accuracy for training
             total_accuracy_training = total_accuracy_training+accuracy_training
